@@ -1,56 +1,46 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<!-- POM from GOlorize taken as example thanks :P -->
+	<properties>
+		<bundle.symbolicName>RDF2GraphViewer</bundle.symbolicName>
+		<bundle.namespace>nl.wur.ssb.RDF2GraphViewer.internal</bundle.namespace>
+		<cytoscape.api.version>3.2.0</cytoscape.api.version>
+		<maven-bundle-plugin.version>2.3.4</maven-bundle-plugin.version>
+		<osgi.api.version>4.2.0</osgi.api.version>
+	</properties>
+
 	<groupId>nl.wur.ssb.RDF2GraphViewer</groupId>
 	<artifactId>RDF2GraphViewer</artifactId>
-	<version>0.1-SNAPSHOT</version>
-	<dependencies>
-		<dependency>
-			<artifactId>app-api</artifactId>
-			<groupId>org.cytoscape</groupId>
-			<version>3.3.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<artifactId>swing-app-api</artifactId>
-			<groupId>org.cytoscape</groupId>
-			<version>3.3.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-	</dependencies>
+	<packaging>bundle</packaging>
+	<name>${bundle.symbolicName}</name>
+
+	<version>1.0.0-SNAPSHOT</version>
+
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<extensions>true</extensions>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<instructions>
+						<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Export-Package>!${bundle.namespace}.*</Export-Package>
+						<Private-Package>${bundle.namespace}.*</Private-Package>
+						<!--<Cytoscape-App-Dependencies>enhancedGraphics;0.0.4</Cytoscape-App-Dependencies>-->
+						<Cytoscape-API-Compatibility>3.2</Cytoscape-API-Compatibility>
+						<Bundle-Activator>${bundle.namespace}.CyActivator</Bundle-Activator>
+						<!--<Embed-Dependency>colt,concurrent;scope=compile|runtime</Embed-Dependency>-->
+					</instructions>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<Cytoscape-App-Name>RDF2GraphViewer</Cytoscape-App-Name>
-							<Cytoscape-App>nl.wur.ssb.RDF2GraphViewer.RDF2GraphViewer</Cytoscape-App>
-							<Cytoscape-App-Version>0.1</Cytoscape-App-Version>
-							<Cytoscape-API-Compatibility>3.0</Cytoscape-API-Compatibility>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
+		    <plugin>
 				<artifactId>exec-maven-plugin</artifactId>
 				<groupId>org.codehaus.mojo</groupId>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
 						<id>install_jar</id>
@@ -66,4 +56,80 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<!-- Links to the Cytoscape Maven repositories. -->
+	<repositories>
+		<repository>
+			<id>cytoscape_snapshots</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<name>Cytoscape Snapshots</name>
+			<url>http://code.cytoscape.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>cytoscape_releases</id>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<name>Cytoscape Releases</name>
+			<url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>cytoscape_apps_api</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<name>Cytoscape Apps API Releases</name>
+			<url>http://code.cytoscape.org/nexus/content/repositories/apps/</url>
+		</repository>
+		<!--<repository>
+   			 <id>central</id>
+    			<url>http://repo1.maven.org/maven2/</url>
+  		</repository>-->
+		
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>swing-application-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>work-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>service-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+		</dependency>
+	   <dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>swing-app-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>presentation-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+			<type>bundle</type>
+		</dependency>
+	</dependencies>
 </project>
